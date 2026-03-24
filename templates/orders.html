@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Orders | GM Groups{% endblock %}
+{% block page_title %}Order Management{% endblock %}
+{% block page_subtitle %}Staff can add orders, while admins can edit and delete them.{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-xl-4">
+        <div class="panel-card">
+            <h5 class="mb-3">{{ 'Edit Order' if edit_order else 'Add New Order' }}</h5>
+            <form method="post">
+                <input type="hidden" name="action" value="{{ 'update' if edit_order else 'add' }}">
+                {% if edit_order %}
+                <input type="hidden" name="order_id" value="{{ edit_order.id }}">
+                {% endif %}
+                <div class="mb-3">
+                    <label class="form-label">Customer Name</label>
+                    <input type="text" name="customer_name" class="form-control" value="{{ edit_order.customer_name if edit_order else '' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Phone</label>
+                    <input type="text" name="phone" class="form-control" value="{{ edit_order.phone if edit_order else '' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Product</label>
+                    <select name="product" class="form-select" required>
+                        {% if not edit_order %}
+                        <option value="" selected disabled>Select product</option>
+                        {% endif %}
+                        {% for product in product_choices %}
+                        <option value="{{ product.product_name }}" {% if edit_order and edit_order.product == product.product_name %}selected{% endif %}>
+                            {{ product.product_name }} ({{ product.category }} / {{ product.unit }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" step="0.01" min="0.01" name="quantity" class="form-control" value="{{ edit_order.quantity if edit_order else '' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Date</label>
+                    <input type="date" name="order_date" class="form-control" value="{{ edit_order.order_date if edit_order else today }}" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select" required>
+                        <option value="Pending" {% if not edit_order or edit_order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Completed" {% if edit_order and edit_order.status == 'Completed' %}selected{% endif %}>Completed</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">{{ 'Update Order' if edit_order else 'Add Order' }}</button>
+                    {% if edit_order %}
+                    <a href="{{ url_for('orders') }}" class="btn btn-outline-secondary">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-xl-8">
+        <div class="panel-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">All Orders</h5>
+                <span class="badge text-bg-primary">{{ orders_list|length }} order(s)</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Phone</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders_list %}
+                        <tr>
+                            <td>{{ order.customer_name }}</td>
+                            <td>{{ order.phone }}</td>
+                            <td>{{ order.product }}</td>
+                            <td>{{ order.quantity }}</td>
+                            <td>{{ order.order_date }}</td>
+                            <td>
+                                <span class="badge {% if order.status == 'Completed' %}text-bg-success{% else %}text-bg-secondary{% endif %}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>{{ order.creator_name or 'Unknown' }}</td>
+                            <td>
+                                {% if current_user.role == 'admin' %}
+                                <a href="{{ url_for('orders', edit=order.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <form method="post" class="d-inline">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger delete-btn">Delete</button>
+                                </form>
+                                {% else %}
+                                <span class="text-muted small">View only</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="8" class="text-center text-muted py-4">No orders available.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

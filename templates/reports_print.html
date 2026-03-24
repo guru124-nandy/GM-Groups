@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports | GM Groups</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 24px;
+            color: #102233;
+            background: #ffffff;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-24deg);
+            font-size: 5rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #0b2545;
+            opacity: 0.5;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 0;
+        }
+
+        .print-shell {
+            position: relative;
+            z-index: 1;
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        .print-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #dbe7f3;
+            padding-bottom: 16px;
+        }
+
+        .print-header h1 {
+            margin: 0 0 6px;
+            color: #0b2545;
+        }
+
+        .print-header p {
+            margin: 4px 0;
+        }
+
+        .print-actions {
+            margin-bottom: 20px;
+        }
+
+        .print-actions button,
+        .print-actions a {
+            display: inline-block;
+            margin-right: 10px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid #0b2545;
+            background: #0b2545;
+            color: #ffffff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .report-card {
+            margin-bottom: 24px;
+            border: 1px solid #dbe7f3;
+            border-radius: 12px;
+            padding: 18px;
+            break-inside: avoid;
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #0b2545;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #dbe7f3;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #eef4fb;
+        }
+
+        .empty-state {
+            color: #52606d;
+            margin: 0;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+
+            .print-actions {
+                display: none;
+            }
+
+            .report-card {
+                border-color: #cfdceb;
+            }
+
+            .watermark {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body{% if auto_print %} onload="window.print()"{% endif %}>
+    <div class="watermark">GM Groups</div>
+
+    <div class="print-shell">
+        <div class="print-actions">
+            <button type="button" onclick="window.print()">{% if download_mode %}Save as PDF{% else %}Print{% endif %}</button>
+            <a href="{{ url_for('reports') }}">Back to Reports</a>
+        </div>
+
+        <div class="print-header">
+            <div>
+                <h1>GM Groups</h1>
+                <p>Tamarind & Coconut Traders</p>
+                <p>Reports generated on {{ generated_at }}</p>
+            </div>
+            <div>
+                <p><strong>Date:</strong> {{ today }}</p>
+                <p><strong>Month:</strong> {{ current_month }}</p>
+            </div>
+        </div>
+
+        <div class="report-card">
+            <h2>Daily Orders</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in daily_orders %}
+                    <tr>
+                        <td>{{ order.customer_name }}</td>
+                        <td>{{ order.product }}</td>
+                        <td>{{ order.quantity }}</td>
+                        <td>{{ order.status }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4" class="empty-state">No orders recorded today.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="report-card">
+            <h2>Monthly Summary</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Orders</th>
+                        <th>Total Qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in monthly_summary %}
+                    <tr>
+                        <td>{{ item.product }}</td>
+                        <td>{{ item.order_count }}</td>
+                        <td>{{ item.total_quantity }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="3" class="empty-state">No monthly order data available.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="report-card">
+            <h2>Stock Report</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in stock_report %}
+                    <tr>
+                        <td>{{ item.category }}</td>
+                        <td>{{ item.product_name }}</td>
+                        <td>{{ item.quantity }} {{ item.unit }}</td>
+                        <td>{{ item.last_updated }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4" class="empty-state">No stock data available.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

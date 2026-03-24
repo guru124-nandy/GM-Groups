@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Profile | GM Groups{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block page_subtitle %}Manage your account details and personal contact information.{% endblock %}
+
+{% block content %}
+<div class="row g-4 justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+        <div class="panel-card">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+                <div>
+                    <h5 class="mb-1">Profile Details</h5>
+                    <p class="text-muted mb-0">Update your login information and personal details here.</p>
+                </div>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-outline-secondary">Back</a>
+            </div>
+
+            <form method="post">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="full_name" class="form-control" value="{{ profile_user.full_name or '' }}" placeholder="Enter full name">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" value="{{ profile_user.username }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" name="date_of_birth" class="form-control" value="{{ profile_user.date_of_birth or '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Gender</label>
+                        <select name="gender" class="form-select">
+                            <option value="">Select gender</option>
+                            {% for option in ['Male', 'Female', 'Other', 'Prefer not to say'] %}
+                            <option value="{{ option }}" {% if profile_user.gender == option %}selected{% endif %}>{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Mail ID</label>
+                        <input type="email" name="email" class="form-control" value="{{ profile_user.email or '' }}" placeholder="name@example.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" name="phone" class="form-control" value="{{ profile_user.phone or '' }}" placeholder="Enter phone number">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" class="form-control" rows="3" placeholder="Enter address">{{ profile_user.address or '' }}</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">New Password</label>
+                        <input type="password" name="password" class="form-control">
+                        <div class="form-text">Leave blank if you do not want to change the password.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" name="confirm_password" class="form-control">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+                    <div class="text-muted">
+                        Account type: {{ profile_user.role|title }}
+                        <span class="mx-2">|</span>
+                        Joined: {{ profile_user.created_at[:10] }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

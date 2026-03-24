@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Reports | GM Groups{% endblock %}
+{% block page_title %}Reports{% endblock %}
+{% block page_subtitle %}Review daily activity, monthly order summaries, and current stock positions.{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap gap-2 justify-content-end mb-4">
+    <a href="{{ url_for('reports_print') }}" target="_blank" class="btn btn-outline-primary">Print</a>
+    <a href="{{ url_for('reports_print', auto_print=1, download='pdf') }}" target="_blank" class="btn btn-primary">Download PDF</a>
+</div>
+<div class="row g-4">
+    <div class="col-12">
+        <div class="panel-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Daily Orders</h5>
+                <span class="badge text-bg-info">{{ today }}</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in daily_orders %}
+                        <tr>
+                            <td>{{ order.customer_name }}</td>
+                            <td>{{ order.product }}</td>
+                            <td>{{ order.quantity }}</td>
+                            <td>{{ order.status }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-4">No orders recorded today.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="panel-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Monthly Summary</h5>
+                <span class="badge text-bg-secondary">{{ current_month }}</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Orders</th>
+                            <th>Total Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in monthly_summary %}
+                        <tr>
+                            <td>{{ item.product }}</td>
+                            <td>{{ item.order_count }}</td>
+                            <td>{{ item.total_quantity }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="3" class="text-center text-muted py-4">No monthly order data available.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="panel-card">
+            <h5 class="mb-3">Stock Report</h5>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in stock_report %}
+                        <tr>
+                            <td>{{ item.category }}</td>
+                            <td>{{ item.product_name }}</td>
+                            <td>{{ item.quantity }} {{ item.unit }}</td>
+                            <td>{{ item.last_updated }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-4">No stock data available.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

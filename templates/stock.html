@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Stock | GM Groups{% endblock %}
+{% block page_title %}Stock Management{% endblock %}
+{% block page_subtitle %}Maintain coconut and tamarind inventory with role-based controls.{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-xl-4">
+        <div class="panel-card">
+            <h5 class="mb-3">{{ 'Edit Stock Item' if edit_item else 'Add Stock Item' }}</h5>
+            <form method="post">
+                <input type="hidden" name="action" value="{{ 'update' if edit_item else 'add' }}">
+                {% if edit_item %}
+                <input type="hidden" name="stock_id" value="{{ edit_item.id }}">
+                {% endif %}
+                <div class="mb-3">
+                    <label class="form-label">Product Name</label>
+                    <input type="text" name="product_name" class="form-control" value="{{ edit_item.product_name if edit_item else '' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-select" required>
+                        <option value="Coconut" {% if edit_item and edit_item.category == 'Coconut' %}selected{% endif %}>Coconut</option>
+                        <option value="Tamarind" {% if edit_item and edit_item.category == 'Tamarind' %}selected{% endif %}>Tamarind</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" step="0.01" min="0" name="quantity" class="form-control" value="{{ edit_item.quantity if edit_item else '' }}" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Unit</label>
+                    <select name="unit" class="form-select" required>
+                        <option value="nos" {% if edit_item and edit_item.unit == 'nos' %}selected{% endif %}>nos</option>
+                        <option value="kg" {% if edit_item and edit_item.unit == 'kg' %}selected{% endif %}>kg</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">{{ 'Update Stock' if edit_item else 'Add Stock' }}</button>
+                    {% if edit_item %}
+                    <a href="{{ url_for('stock') }}" class="btn btn-outline-secondary">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-xl-8">
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="panel-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Coconut Stock</h5>
+                        <span class="badge text-bg-success">{{ coconut_items|length }} item(s)</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in coconut_items %}
+                                <tr>
+                                    <td>{{ item.product_name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.unit }}</td>
+                                    <td>{{ item.last_updated }}</td>
+                                    <td>
+                                        <a href="{{ url_for('stock', edit=item.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        {% if current_user.role == 'admin' %}
+                                        <form method="post" class="d-inline">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="stock_id" value="{{ item.id }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger delete-btn">Delete</button>
+                                        </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="5" class="text-center text-muted py-4">No coconut stock items found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="panel-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Tamarind Stock</h5>
+                        <span class="badge text-bg-warning">{{ tamarind_items|length }} item(s)</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in tamarind_items %}
+                                <tr>
+                                    <td>{{ item.product_name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.unit }}</td>
+                                    <td>{{ item.last_updated }}</td>
+                                    <td>
+                                        <a href="{{ url_for('stock', edit=item.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        {% if current_user.role == 'admin' %}
+                                        <form method="post" class="d-inline">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="stock_id" value="{{ item.id }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger delete-btn">Delete</button>
+                                        </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="5" class="text-center text-muted py-4">No tamarind stock items found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

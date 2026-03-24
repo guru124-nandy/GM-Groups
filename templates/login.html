@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Login | GM Groups{% endblock %}
+
+{% block auth_content %}
+<div class="login-page">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-lg-8 col-xl-7">
+                <div class="login-card shadow-lg">
+                    <div class="auth-card-body p-4 p-md-5">
+                        <div class="text-center mb-4">
+                            <h1 class="auth-title">GM Groups</h1>
+                            <p class="auth-subtitle mb-1">Tamarind & Coconut Traders</p>
+                            <p class="text-muted mb-0">Login or create a new admin or staff account.</p>
+                        </div>
+
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <ul class="nav nav-pills auth-tabs mb-4" id="authTabs" role="tablist">
+                            <li class="nav-item w-50" role="presentation">
+                                <button class="nav-link w-100 {% if active_tab != 'register' %}active{% endif %}" id="login-tab" data-bs-toggle="pill" data-bs-target="#login-pane" type="button" role="tab" aria-controls="login-pane" aria-selected="{% if active_tab != 'register' %}true{% else %}false{% endif %}">Login</button>
+                            </li>
+                            <li class="nav-item w-50" role="presentation">
+                                <button class="nav-link w-100 {% if active_tab == 'register' %}active{% endif %}" id="register-tab" data-bs-toggle="pill" data-bs-target="#register-pane" type="button" role="tab" aria-controls="register-pane" aria-selected="{% if active_tab == 'register' %}true{% else %}false{% endif %}">Register</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane fade {% if active_tab != 'register' %}show active{% endif %}" id="login-pane" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
+                                <form method="post">
+                                    <input type="hidden" name="form_type" value="login">
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" name="username" class="form-control" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Password</label>
+                                        <input type="password" name="password" class="form-control" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                                </form>
+                            </div>
+
+                            <div class="tab-pane fade {% if active_tab == 'register' %}show active{% endif %}" id="register-pane" role="tabpanel" aria-labelledby="register-tab" tabindex="0">
+                                <form method="post">
+                                    <input type="hidden" name="form_type" value="register">
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" name="register_username" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Register As</label>
+                                        <select name="role" class="form-select" required>
+                                            <option value="" selected disabled>Select account type</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="staff">Staff</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Password</label>
+                                        <input type="password" name="register_password" class="form-control" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Confirm Password</label>
+                                        <input type="password" name="confirm_password" class="form-control" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+

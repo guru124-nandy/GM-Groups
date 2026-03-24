@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}About | GM Groups{% endblock %}
+{% block page_title %}About GM Groups{% endblock %}
+{% block page_subtitle %}Learn more about the company, its products, and the service values behind the business.{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="panel-card about-hero-card">
+            <div class="about-hero-mark">
+                <div class="about-logo-circle">
+                    <span class="about-logo-top">GM</span>
+                    <span class="about-logo-bottom">Groups</span>
+                </div>
+            </div>
+            <div>
+                <span class="about-kicker">&#127970; Company Profile</span>
+                <h3 class="mb-2">{{ company_info.name }}</h3>
+                <p class="about-tagline mb-3">{{ company_info.tagline }}</p>
+                <p class="mb-0 text-muted">{{ company_info.description }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    {% for item in company_info.highlights %}
+    <div class="col-md-6 col-xl-3">
+        <div class="panel-card about-feature-card h-100">
+            <div class="about-icon">{{ item.emoji|safe }}</div>
+            <h5 class="mb-2">{{ item.title }}</h5>
+            <p class="text-muted mb-0">{{ item.text }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="panel-card h-100">
+            <h5 class="mb-3">&#128295; What We Do</h5>
+            <p class="text-muted">GM Groups supports daily trading operations for coconut and tamarind products with organized stock records, quick order tracking, and simple team coordination for admin and staff users.</p>
+            <div class="about-pill-row">
+                <span class="about-pill">&#129381; Fresh Coconut Supply</span>
+                <span class="about-pill">&#127807; Premium Tamarind Trading</span>
+                <span class="about-pill">&#128202; Stock Monitoring</span>
+                <span class="about-pill">&#128666; Order Fulfillment</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="panel-card h-100">
+            <h5 class="mb-3">&#11088; Why Customers Choose Us</h5>
+            <ul class="about-list mb-0">
+                <li>Reliable stock visibility for fast business decisions.</li>
+                <li>Simple order handling for everyday trading work.</li>
+                <li>Coordinated admin and staff workflow inside one system.</li>
+                <li>Focused service for quality coconut and tamarind products.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-12">
+        <div class="panel-card">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+                <div>
+                    <h5 class="mb-1">&#128222; Admin Contact Details</h5>
+                    <p class="text-muted mb-0">Reach the main admin for support, updates, and company coordination.</p>
+                </div>
+                <span class="about-contact-chip">&#128100; {{ admin_contact.name }}</span>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="about-contact-item">
+                        <span class="about-contact-label">&#128231; Email</span>
+                        <strong>{{ admin_contact.email }}</strong>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="about-contact-item">
+                        <span class="about-contact-label">&#128222; Phone</span>
+                        <strong>{{ admin_contact.phone }}</strong>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="about-contact-item">
+                        <span class="about-contact-label">&#128205; Address</span>
+                        <strong>{{ admin_contact.address }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

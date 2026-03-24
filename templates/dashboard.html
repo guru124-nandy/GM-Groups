@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | GM Groups{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Track stock totals, orders, and low inventory alerts at a glance.{% endblock %}
+
+{% block content %}
+{% if current_user.role == 'admin' %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="panel-card">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <h5 class="mb-1">Admin Controls</h5>
+                    <p class="text-muted mb-0">Manage your admin profile and control staff account changes from one place.</p>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ url_for('profile') }}" class="btn btn-primary">&#128100; Edit Admin Profile</a>
+                    <a href="{{ url_for('staff') }}" class="btn btn-outline-primary">&#128101; Manage Staff</a>
+                    <a href="{{ url_for('about') }}" class="btn btn-outline-secondary">&#8505;&#65039; About Company</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="metric-card">
+            <span>&#129381; Total Coconut Stock</span>
+            <h3>{{ coconut_total|round(0)|int }}</h3>
+            <p>Measured in numbers</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="metric-card soft-orange">
+            <span>&#127807; Total Tamarind Stock</span>
+            <h3>{{ "%.2f"|format(tamarind_total) }}</h3>
+            <p>Measured in kilograms</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="metric-card soft-blue">
+            <span>&#128221; Total Orders</span>
+            <h3>{{ orders_total }}</h3>
+            <p>All orders in the system</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="metric-card soft-red">
+            <span>{% if current_user.role == 'admin' %}&#128101; Total Staff Users{% else %}&#9888;&#65039; Low Stock Alerts{% endif %}</span>
+            <h3>{% if current_user.role == 'admin' %}{{ staff_total }}{% else %}{{ low_stock_items|length }}{% endif %}</h3>
+            <p>{% if current_user.role == 'admin' %}Admin-managed staff accounts{% else %}Items at or below threshold{% endif %}</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="panel-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">&#128230; Low Stock Items</h5>
+                <span class="badge text-bg-warning">Threshold: 25</span>
+            </div>
+            {% if low_stock_items %}
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in low_stock_items %}
+                        <tr>
+                            <td>{{ item.product_name }}</td>
+                            <td>{{ item.category }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.unit }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="empty-state mb-0">No low stock alerts right now.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">&#128339; Recent Orders</h5>
+                <a href="{{ url_for('orders') }}" class="btn btn-sm btn-outline-primary">Manage Orders</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in latest_orders %}
+                        <tr>
+                            <td>{{ order.customer_name }}</td>
+                            <td>{{ order.product }}</td>
+                            <td>
+                                <span class="badge {% if order.status == 'Completed' %}text-bg-success{% else %}text-bg-secondary{% endif %}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>{{ order.order_date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
